@@ -34,7 +34,7 @@ jobs:
         # Set up SSH key
         echo "$DEPLOY_KEY" > deploy_key
         chmod 600 deploy_key
-
+        ls -lah ./dist/  
         # Sync files to server
         rsync -avz -e "ssh -i deploy_key -o StrictHostKeyChecking=no" ./dist/ $SERVER_USER@$SERVER_HOST:$SERVER_PATH
 
