@@ -32,6 +32,37 @@ function getSidebarItems() {
   return items.sort((a, b) => a.text.localeCompare(b.text));
 }
 
+
+function getHouseholdItems() {
+  const householdDir = path.resolve(__dirname, '../household');
+  const files = fs.readdirSync(householdDir).filter((file) => file.endsWith('.md') && file !== 'index.md');
+
+  const items = files.map((file) => {
+    const filePath = path.join(householdDir, file);
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+
+    // Extract title from front matter
+    const frontMatterMatch = fileContent.match(/^---\n([\s\S]*?)\n---/);
+    let title = file.replace('.md', ''); // Default to filename if no title is found
+
+    if (frontMatterMatch) {
+      const frontMatter = frontMatterMatch[1];
+      const titleMatch = frontMatter.match(/title:\s*(.*)/);
+      if (titleMatch) {
+        title = titleMatch[1].trim();
+      }
+    }
+
+    return {
+      text: title,
+      link: `/household/${file.replace('.md', '')}`,
+    };
+  });
+
+  // Sort items by title alphabetically
+  return items.sort((a, b) => a.text.localeCompare(b.text));
+}
+
 export default defineConfig({
   title: "Abandoned diary",
   description: "notebook",
@@ -54,7 +85,19 @@ export default defineConfig({
             {
               text: 'Diary',
               collapsed: false,
-              items: getSidebarItems() // Automatically sorted by title
+              items: getSidebarItems()
+            }
+          ]
+        }
+      ],
+      '/household/': [
+        {
+          text: 'Household',
+          items: [
+            {
+              text: 'Diary',
+              collapsed: false,
+              items: getHouseholdItems()
             }
           ]
         }
