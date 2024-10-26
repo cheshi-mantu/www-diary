@@ -29,7 +29,7 @@ export default defineConfig({
     ]
   },
   sitemap: {
-    hostname: 'https://example.com'
+    hostname: 'http://cheshimantu.lol'
   }
 })
 
