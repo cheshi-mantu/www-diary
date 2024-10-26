@@ -26,6 +26,7 @@ jobs:
     - name: Build VitePress site
       run: |
         ls -lah
+        mkdir ../../dist
         npm run docs:build
 
     - name: Deploy to Server
@@ -40,7 +41,7 @@ jobs:
         chmod 600 deploy_key
         ls -lah ./dist/  
         # Sync files to server
-        rsync -avz -e "ssh -i deploy_key -o StrictHostKeyChecking=no" ./dist/ $SERVER_USER@$SERVER_HOST:$SERVER_PATH
+        rsync -avz -e "ssh -i deploy_key -o StrictHostKeyChecking=no" ../../dist/ $SERVER_USER@$SERVER_HOST:$SERVER_PATH
 
         # Clean up
         rm deploy_key
