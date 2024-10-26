@@ -54,5 +54,5 @@ jobs:
         BACK_LINK: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         TEXT_TO_SEND: "👌 🏗️ We deployed all the changes to LOL site for via 🚀"
       run: |
-        TEXT_TO_SEND="${TEXT_TO_SEND} ${BACK_LINK}"
+        TEXT_TO_SEND="${{ env.TEXT_TO_SEND }} ${{ env.BACK_LINK }}"
         curl -X POST "https://api.telegram.org/$BOT_ID$BOT_SECRET/sendMessage" --data "chat_id=${CHAT_ID}&text=${TEXT_TO_SEND}"
