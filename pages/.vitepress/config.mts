@@ -9,7 +9,7 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       { text: 'Examples', link: '/markdown-examples' }
     ],
-
+    outDir: '../../dist',
     sidebar: [
       {
         text: 'Examples',
