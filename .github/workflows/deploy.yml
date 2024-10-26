@@ -47,3 +47,12 @@ jobs:
 
         # Clean up
         rm deploy_key
+    - name: Inform via telegram
+      env:
+        BOT_ID: ${{ secrets.TLG_BOT_ID }}
+        BOT_SECRET: ${{ secrets.TLG_BOT_KEY }}
+        CHAT_ID: ${{ secrets.TLG_CHAT_ID }}
+        TEST_TO_SEND: "We deployed all the changes to LOL site"
+      run: |
+
+        curl -X POST "https://api.telegram.org/$BOT_ID$BOT_SECRET/sendMessage" --data "chat_id=${CHAT_ID}&text=${TEXT_TO_SEND}"
