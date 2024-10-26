@@ -1,0 +1,47 @@
+# Node modules directory
+node_modules/
+
+# Output directory (commonly used for compiled JavaScript files)
+dist/
+build/
+
+# Cache directories and files
+.cache/
+*.cache
+*.tsbuildinfo
+
+# TypeScript declaration files (optional, if you don't want to include them)
+*.d.ts
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables file
+.env
+.env.local
+.env.*.local
+
+# Package lock files (if not required by your team conventions)
+package-lock.json
+yarn.lock
+
+# MacOS system files
+.DS_Store
+
+# VSCode settings folder
+.vscode/
+
+# Jest cache and coverage directories
+coverage/
+jest-cache/
+jest-output/
+
+# IDE folders
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+.vscode/
