@@ -19,7 +19,9 @@ jobs:
         node-version: '16'  # Adjust based on your Node.js version
 
     - name: Install dependencies
-      run: npm install
+      run: |
+        npm add -D vitepress
+        npm install
 
     - name: Build VitePress site
       run: |
