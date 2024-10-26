@@ -22,7 +22,9 @@ jobs:
       run: npm install
 
     - name: Build VitePress site
-      run: npm run docs:build
+      run: |
+        ls -lah
+        npm run docs:build
 
     - name: Deploy to Server
       env:
