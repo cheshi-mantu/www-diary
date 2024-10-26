@@ -21,6 +21,7 @@ jobs:
     - name: Install dependencies
       run: |
         cd pages
+        pwd
         npm add -D vitepress
         npm install
 
@@ -36,10 +37,11 @@ jobs:
         SERVER_USER: ${{ secrets.SERVER_USER }}
         SERVER_PATH: ${{ secrets.SERVER_PATH }}
       run: |
+        cd pages/.vitepress
         # Set up SSH key
         echo "$DEPLOY_KEY" > deploy_key
         chmod 600 deploy_key
-        cd .vitepress
+        pwd
         # Sync files to server
         rsync -avz -e "ssh -i deploy_key -o StrictHostKeyChecking=no" dist/ $SERVER_USER@$SERVER_HOST:$SERVER_PATH
 
