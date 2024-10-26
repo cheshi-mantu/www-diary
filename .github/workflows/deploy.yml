@@ -1,0 +1,43 @@
+name: Deploy VitePress Site
+
+on:
+  push:
+    branches:
+      - main  # Adjust if deploying from a different branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'  # Adjust based on your Node.js version
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build VitePress site
+      run: npm run build
+
+    - name: Deploy to Server
+      env:
+        DEPLOY_KEY: ${{ secrets.LOL_DEPLOY_KEY }}
+        SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_PATH: ${{ secrets.SERVER_PATH }}
+      run: |
+        # Set up SSH key
+        echo "$DEPLOY_KEY" > deploy_key
+        chmod 600 deploy_key
+
+        # Sync files to server
+        rsync -avz -e "ssh -i deploy_key -o StrictHostKeyChecking=no" \
+          dist/ $SERVER_USER@$SERVER_HOST:$SERVER_PATH
+
+        # Clean up
+        rm deploy_key
