@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -52,7 +51,7 @@ jobs:
         BOT_ID: ${{ secrets.TLG_BOT_ID }}
         BOT_SECRET: ${{ secrets.TLG_BOT_KEY }}
         CHAT_ID: ${{ secrets.TLG_CHAT_ID }}
-        TEXT_TO_SEND: "We deployed all the changes to LOL site"
+        TEXT_TO_SEND: "👌 We deployed all the changes to LOL site"
       run: |
 
         curl -X POST "https://api.telegram.org/$BOT_ID$BOT_SECRET/sendMessage" --data "chat_id=${CHAT_ID}&text=${TEXT_TO_SEND}"
