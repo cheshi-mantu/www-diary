@@ -16,18 +16,17 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16'  # Adjust based on your Node.js version
+        node-version: '18'
 
     - name: Install dependencies
       run: |
-        cd 
+        cd pages
         npm add -D vitepress
         npm install
 
     - name: Build VitePress site
       run: |
         ls -lah
-        mkdir ../../dist
         npm run docs:build
 
     - name: Deploy to Server
@@ -40,9 +39,9 @@ jobs:
         # Set up SSH key
         echo "$DEPLOY_KEY" > deploy_key
         chmod 600 deploy_key
-        ls -lah ../../dist/  
+        cd .vitepress
         # Sync files to server
-        rsync -avz -e "ssh -i deploy_key -o StrictHostKeyChecking=no" ../../dist/ $SERVER_USER@$SERVER_HOST:$SERVER_PATH
+        rsync -avz -e "ssh -i deploy_key -o StrictHostKeyChecking=no" dist/ $SERVER_USER@$SERVER_HOST:$SERVER_PATH
 
         # Clean up
         rm deploy_key
