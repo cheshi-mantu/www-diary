@@ -95,7 +95,7 @@ export default defineConfig({
           text: 'Household',
           items: [
             {
-              text: 'Diary',
+              text: 'Household stuff',
               collapsed: false,
               items: getHouseholdItems()
             }
