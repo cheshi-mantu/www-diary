@@ -64,5 +64,90 @@ enx000ec6aceaf9: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
 
 This means Raspberry Pi got the IP address 192.168.0.21 from my router, and the device that is used to connect Raspberry Pi to the router is **enx000ec6aceaf9**.
 
+Now, if we execute same command again but without the grep part, we'll understand the whole piceture better.
 
-WIP 2024-10-27
+```shell
+ifconfig
+end0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.99.1  netmask 255.255.255.0  broadcast 192.168.99.255
+        inet6 fe80::dea6:32ff:fe90:dff3  prefixlen 64  scopeid 0x20<link>
+        ether dc:a6:32:90:df:f3  txqueuelen 1000  (Ethernet)
+        RX packets 36583  bytes 3012811 (2.8 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 541  bytes 30596 (29.8 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+enx000ec6aceaf9: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.0.21  netmask 255.255.255.0  broadcast 192.168.0.255
+        inet6 fe80::20e:c6ff:feac:eaf9  prefixlen 64  scopeid 0x20<link>
+        ether 00:0e:c6:ac:ea:f9  txqueuelen 1000  (Ethernet)
+        RX packets 658907  bytes 521544026 (497.3 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 369340  bytes 624843599 (595.8 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 41295  bytes 6760015 (6.4 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 41295  bytes 6760015 (6.4 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+```
+
+For **lo** interface we have no interest, this is standard loopback. And there is **end0** interface which is up as well and has an IP address, this one seems to be the TV box we connected. There will be another interface wich is missinng now, something loke **tunXXX**, it will be created by the VPN application.
+
+For sake of this very example, we'll use
+
+- **enx000ec6aceaf9** as the network adaptor that is connected to our router
+
+- **end0** as the network adaptor that is connected to our TV
+
+### Get VPN up and running
+
+I'm considering there is a VPN service in place and you've got configs for OpenVPN. We'll use **nl.protonvpn.net.udp.ovpn** for sake of this example.
+
+#### Install OpenVPN
+
+```shell
+sudo apt update && sudo apt upgrade -y
+sudo apt install openvpn -y
+```
+
+Create a folder anywhere it won't be occasionally deleted. Jump to the folder and create files in this folder (and consider making backup copy from time to time ).
+
+```shell
+mkdir ~/sec
+cd ~/sec
+```
+
+Copy **nl.protonvpn.net.udp.ovpn** to the said folder.
+
+#### Starting VPN connection
+
+```shell
+sudo openvpn --config ./nl.protonvpn.net.udp.ovpn --daemon
+```
+
+As soon as OpenVPN will start and open VPN connection, **tun0** interface will appear in the output of **ifconfig** command.
+
+```shell
+tun0: flags=4305<UP,POINTOPOINT,RUNNING,NOARP,MULTICAST>  mtu 1500
+        inet 10.96.0.15  netmask 255.255.0.0  destination 10.96.0.15
+        inet6 fe80::f911:3c80:8471:dc80  prefixlen 64  scopeid 0x20<link>
+        ...
+```
+
+This is the interface we want our TV box to use for the internet access.
+
+### Route all traffic of TV via VPN
+
+Now, we need to forbid the TV box from using any connections except tun0 to connect to the internet.
+
+
+
+
+
+
+
