@@ -64,10 +64,16 @@ function getHouseholdItems() {
   return items.sort((a, b) => a.text.localeCompare(b.text));
 }
 
+
 export default defineConfig({
   title: "Abandoned diary",
   description: "notebook",
   themeConfig: {
+    editLink: {
+      pattern: 'https://github.com//cheshi-mantu/www-diary/edit/main/pages/:path',
+      text: 'Edit this page on GitHub'
+    },
+    
     sidebar: {
       "/": [
         {
