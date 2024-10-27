@@ -232,7 +232,11 @@ num   pkts bytes target     prot opt in     out     source               destina
 
 Turn on your TV and check.
 
+### TODO
 
+To describe shell files
+
+To describe the restoration of drect access to the internet.
 
 
 
