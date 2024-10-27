@@ -1,6 +1,7 @@
 ---
 layout: doc
 title: Postgres
+editLink: true
 ---
 
 # Install as per the developer pages

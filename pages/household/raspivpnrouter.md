@@ -1,6 +1,7 @@
 ---
 layout: doc
 title: use Raspberry Pi as VPN router for TV
+editLink: true
 ---
 
 # Using Raspberry Pi as VPN router
