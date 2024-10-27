@@ -7,6 +7,44 @@ lastUpdated: true
 
 # Here we have git and sometimes GitHub basics for an idiot
 
+## Git configuration
+
+Configuration can be local or global. We'll discuss global config.
+
+**Username**
+
+```shell
+git config --global user.name "Cheshi Mantu"
+```
+
+**Email**
+
+```shell
+git config --global user.email cheshi.mantu@emailserver.server
+```
+
+**Default code editor**
+
+We'll use VS Code.
+
+```shell
+git config --global core.editor code
+```
+
+**Check global config**
+
+```shell
+git config --list
+```
+
+## Using RSA keys for working with remote repos
+
+This is a secure way to work with systems supporting the work with RSA key pairs to establish secure connection.
+
+### Generate RSA keypair
+
+
+
 ## Start working on a GH project
 
 If all work is done on GH side and there are files, then easy-peasy.
