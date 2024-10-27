@@ -1,18 +1,18 @@
-import { defineConfig } from 'vitepress';
-import fs from 'fs';
-import path from 'path';
+import { defineConfig } from "vitepress";
+import fs from "fs";
+import path from "path";
 
 function getSidebarItems() {
-  const pagesDir = path.resolve(__dirname, '../diary');
-  const files = fs.readdirSync(pagesDir).filter((file) => file.endsWith('.md'));
+  const pagesDir = path.resolve(__dirname, "../diary");
+  const files = fs.readdirSync(pagesDir).filter((file) => file.endsWith(".md"));
 
   const items = files.map((file) => {
     const filePath = path.join(pagesDir, file);
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    const fileContent = fs.readFileSync(filePath, "utf-8");
 
     // Extract title from front matter
     const frontMatterMatch = fileContent.match(/^---\n([\s\S]*?)\n---/);
-    let title = file.replace('.md', ''); // Default to filename if no title is found
+    let title = file.replace(".md", ""); // Default to filename if no title is found
 
     if (frontMatterMatch) {
       const frontMatter = frontMatterMatch[1];
@@ -24,7 +24,7 @@ function getSidebarItems() {
 
     return {
       text: title,
-      link: `/diary/${file.replace('.md', '')}`,
+      link: `/diary/${file.replace(".md", "")}`,
     };
   });
 
@@ -32,18 +32,19 @@ function getSidebarItems() {
   return items.sort((a, b) => a.text.localeCompare(b.text));
 }
 
-
 function getHouseholdItems() {
-  const householdDir = path.resolve(__dirname, '../household');
-  const files = fs.readdirSync(householdDir).filter((file) => file.endsWith('.md') && file !== 'index.md');
+  const householdDir = path.resolve(__dirname, "../household");
+  const files = fs
+    .readdirSync(householdDir)
+    .filter((file) => file.endsWith(".md") && file !== "index.md");
 
   const items = files.map((file) => {
     const filePath = path.join(householdDir, file);
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    const fileContent = fs.readFileSync(filePath, "utf-8");
 
     // Extract title from front matter
     const frontMatterMatch = fileContent.match(/^---\n([\s\S]*?)\n---/);
-    let title = file.replace('.md', ''); // Default to filename if no title is found
+    let title = file.replace(".md", ""); // Default to filename if no title is found
 
     if (frontMatterMatch) {
       const frontMatter = frontMatterMatch[1];
@@ -55,7 +56,7 @@ function getHouseholdItems() {
 
     return {
       text: title,
-      link: `/household/${file.replace('.md', '')}`,
+      link: `/household/${file.replace(".md", "")}`,
     };
   });
 
@@ -68,40 +69,46 @@ export default defineConfig({
   description: "notebook",
   themeConfig: {
     sidebar: {
-      '/': [
+      "/": [
         {
-          text: 'Well, hello?',
+          text: "Well, hello?",
           items: [
-            { text: 'Start here', link: '/' },
-            { text: 'Diary', link: '/diary/' },
-            { text: 'Household', link: '/household/' }
-          ]
-        }
+            { text: "Start here", link: "/" },
+            { text: "Diary", link: "/diary/" },
+            { text: "Household", link: "/household/" },
+          ],
+        },
       ],
-      '/diary/': [
+      "/diary/": [
         {
-          text: 'Well, hello?',
+          text: "Well, hello?",
           items: [
             {
-              text: 'Diary',
+              text: "Diary",
               collapsed: false,
-              items: getSidebarItems()
-            }
-          ]
-        }
+              items: getSidebarItems(),
+            },
+          ],
+        },
       ],
-      '/household/': [
+      "/household/": [
         {
-          text: 'Household',
+          text: "Household",
           items: [
             {
-              text: 'Household stuff',
+              text: "Household stuff",
               collapsed: false,
-              items: getHouseholdItems()
-            }
-          ]
-        }
-      ]
-    }
-  }
+              items: [
+                ...getHouseholdItems(), // Automatically generated items
+                {
+                  text: "< Back",
+                  link: "/",
+                }, // Manually added item
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  },
 });
