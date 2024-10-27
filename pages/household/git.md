@@ -37,12 +37,18 @@ git config --global core.editor code
 git config --list
 ```
 
-## Using RSA keys for working with remote repos
+### Get your RSA public key
 
-This is a secure way to work with systems supporting the work with RSA key pairs to establish secure connection.
+See [this article](/household/ssh-rsa) to understand what is it and how to generate the RSA key pair.
 
-### Generate RSA keypair
+### Provide keys to GH
 
+1. On GH side click your avatar in the top right corner an then jump to Settings.
+2. In the Settings (on the left hand side) find **SSH and GPG keys**.
+3. Click new SSH key
+4. Name the key
+5. Copy the result of the command `cat ~/.ssh/id_rsa.pub`.
+6. Save.
 
 
 ## Start working on a GH project
