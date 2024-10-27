@@ -141,9 +141,66 @@ tun0: flags=4305<UP,POINTOPOINT,RUNNING,NOARP,MULTICAST>  mtu 1500
 
 This is the interface we want our TV box to use for the internet access.
 
+Also we can check if openvpn is running
+
+```she
+ps aux | grep openvpn
+```
+
 ### Route all traffic of TV via VPN
 
-Now, we need to forbid the TV box from using any connections except tun0 to connect to the internet.
+Now, we need to forbid the TV box from using any connections except **tun0** to connect to the internet.
+
+We'll use iptables to define the allowed routes. And we'll also need to keep our changes persistent, so we need to install
+
+```shell
+sudo apt update && sudo apt upgrade -y
+sudo apt install iptables
+sudo apt install iptables-persistent
+```
+
+**iptables** generally allows managing and viewing rules for ip traffic, **iptables-persistent** allows making the changes you've made persistent across reboots.
+
+Check what are current rules
+
+```shell
+sudo iptables -L -v -n --line-numbers
+```
+
+We don't need any residing rules, so let's flush it all
+
+```she
+sudo iptables -F && sudo iptables -t nat -F && sudo iptables -t mangle -F
+sudo iptables -X && sudo iptables -t nat -X && sudo iptables -t mangle -X
+```
+
+to avoid blocking the traffic we can create defaul policy
+
+```shell
+sudo iptables -P INPUT ACCEPT && sudo iptables -P FORWARD ACCEPT && sudo iptables -P OUTPUT ACCEPT
+```
+
+#### Routing TV traffic via VPN tun0
+
+Now, we're starting to manipulate the IP tables.
+
+Append a rule which forwards all packets from **eth0** to **tun0**.
+
+```shell
+sudo iptables -A FORWARD -i end0 -o tun0 -j ACCEPT
+```
+
+Allow traffic for established and related connections from **eth0** to **tun0**.
+
+```shell
+sudo iptables -A FORWARD -i tun0 -o end0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+```
+
+
+
+
+
+
 
 
 
