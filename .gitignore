@@ -9,6 +9,8 @@ build/
 .cache/
 *.cache
 *.tsbuildinfo
+cache/
+
 
 # TypeScript declaration files (optional, if you don't want to include them)
 *.d.ts
@@ -33,10 +35,8 @@ yarn.lock
 # VSCode settings folder
 .vscode/
 
-# Jest cache and coverage directories
-coverage/
-jest-cache/
-jest-output/
+# vitepress
+
 
 # IDE folders
 .idea/

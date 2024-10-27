@@ -69,8 +69,15 @@ export default defineConfig({
   title: "Abandoned diary",
   description: "notebook",
   themeConfig: {
+    search: {
+      provider: 'local'
+    },
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/cheshi-mantu/www-diary' }
+    ],
+    lastUpdated: true, 
     editLink: {
-      pattern: 'https://github.com//cheshi-mantu/www-diary/edit/main/pages/:path',
+      pattern: 'https://github.com/cheshi-mantu/www-diary/edit/main/pages/:path',
       text: 'Edit this page on GitHub'
     },
     
