@@ -1,8 +1,9 @@
 ---
 layout: doc
-title: #1
+prev: false
 next: false
 editLink: false
+lastUpdated: false
 ---
 
 # You got me
