@@ -196,6 +196,41 @@ Allow traffic for established and related connections from **eth0** to **tun0**.
 sudo iptables -A FORWARD -i tun0 -o end0 -m state --state RELATED,ESTABLISHED -j ACCEPT
 ```
 
+Enable **NAT (Network Address Translation)** for outgoing packets on **tun0**, so they appear to come from the VPN’s IP address. This is essential for devices on the local network (our TV) to route traffic through the VPN and receive responses correctly.
+
+```shell
+sudo iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
+```
+
+If we want these rules to work after a reboot, then we need to make these persistent.
+
+```shell
+sudo iptables-save
+```
+
+Then we can check the current state of iptables.
+
+```shell
+sudo iptables -L -v -n --line-numbers
+```
+
+The output will be summat like this.
+
+```shell
+Chain INPUT (policy ACCEPT 11644 packets, 11M bytes)
+num   pkts bytes target     prot opt in     out     source               destination         
+
+Chain FORWARD (policy ACCEPT 1797 packets, 125K bytes)
+num   pkts bytes target     prot opt in     out     source               destination         
+1     2732  421K ACCEPT     0    --  end0   tun0    0.0.0.0/0            0.0.0.0/0           
+2     7424 9290K ACCEPT     0    --  tun0   end0    0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
+
+Chain OUTPUT (policy ACCEPT 7720 packets, 1291K bytes)
+num   pkts bytes target     prot opt in     out     source               destination         
+```
+
+Turn on your TV and check.
+
 
 
 
