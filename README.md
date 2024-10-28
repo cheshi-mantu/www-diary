@@ -1,5 +1,15 @@
 # Running developer mode to build local site
 
+## When first time
+
+```shell
+npm add -D vitepress
+```
+
+
+
+## Start ddev site locally
+
 ```shell
 npm run docs:dev
 ```

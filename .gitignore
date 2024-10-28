@@ -10,6 +10,8 @@ build/
 *.cache
 *.tsbuildinfo
 cache/
+cache/
+deps/
 
 
 # TypeScript declaration files (optional, if you don't want to include them)
