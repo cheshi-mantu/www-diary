@@ -18,6 +18,7 @@ function getDirectoryItems(baseDir: string, dir: string) {
   const items = []
   const files = fs.readdirSync(dir)
   const rootItem = files.includes("index.md") ? getPageItem(baseDir, path.join(dir, "index.md")) : undefined
+  console.log("Root item: " + rootItem)
 
   for (const file of files.filter((file) => file !== "index.md")) {
     const filePath = path.join(dir, file)
@@ -46,67 +47,6 @@ function getDirectoryItems(baseDir: string, dir: string) {
   return items
 }
 
-function getSidebarItems() {
-  const pagesDir = path.resolve(__dirname, "../diary");
-  const files = fs.readdirSync(pagesDir).filter((file) => file.endsWith(".md"));
-
-  const items = files.map((file) => {
-    const filePath = path.join(pagesDir, file);
-    const fileContent = fs.readFileSync(filePath, "utf-8");
-
-    // Extract title from front matter
-    const frontMatterMatch = fileContent.match(/^---\n([\s\S]*?)\n---/);
-    let title = file.replace(".md", ""); // Default to filename if no title is found
-
-    if (frontMatterMatch) {
-      const frontMatter = frontMatterMatch[1];
-      const titleMatch = frontMatter.match(/title:\s*(.*)/);
-      if (titleMatch) {
-        title = titleMatch[1].trim();
-      }
-    }
-
-    return {
-      text: title,
-      link: `/diary/${file.replace(".md", "")}`,
-    };
-  });
-
-  // Sort items by title alphabetically
-  return items.sort((a, b) => a.text.localeCompare(b.text));
-}
-
-function getHouseholdItems() {
-  const householdDir = path.resolve(__dirname, "../household");
-  const files = fs
-    .readdirSync(householdDir)
-    .filter((file) => file.endsWith(".md") && file !== "index.md");
-
-  const items = files.map((file) => {
-    const filePath = path.join(householdDir, file);
-    const fileContent = fs.readFileSync(filePath, "utf-8");
-
-    // Extract title from front matter
-    const frontMatterMatch = fileContent.match(/^---\n([\s\S]*?)\n---/);
-    let title = file.replace(".md", ""); // Default to filename if no title is found
-
-    if (frontMatterMatch) {
-      const frontMatter = frontMatterMatch[1];
-      const titleMatch = frontMatter.match(/title:\s*(.*)/);
-      if (titleMatch) {
-        title = titleMatch[1].trim();
-      }
-    }
-
-    return {
-      text: title,
-      link: `/household/${file.replace(".md", "")}`,
-    };
-  });
-
-  // Sort items by title alphabetically
-  return items.sort((a, b) => a.text.localeCompare(b.text));
-}
 
 // TODO: usage example
 console.log("example dir:", JSON.stringify(getDirectoryItems(path.resolve(__dirname, "../"), path.resolve(__dirname, "../example")), null, 2));
@@ -137,6 +77,7 @@ export default defineConfig({
             { text: "Start here", link: "/" },
             { text: "Diary", link: "/diary/" },
             { text: "Household", link: "/household/" },
+            { text: "Example", link: "/example/" },
           ],
         },
       ],
@@ -147,8 +88,12 @@ export default defineConfig({
             {
               text: "Diary",
               collapsed: false,
-              items: getSidebarItems(),
+              items: getDirectoryItems(path.resolve(__dirname, "../"), path.resolve(__dirname, "../diary")),
             },
+            {
+              text: "< Back",
+              link: "/",
+            }, // Manually added item
           ],
         },
       ],
@@ -160,7 +105,12 @@ export default defineConfig({
               text: "Household stuff",
               collapsed: false,
               items: [
-                ...getHouseholdItems(), // Automatically generated items
+                {
+                  text: "Household",
+                  collapsed: false,
+                  items: getDirectoryItems(path.resolve(__dirname, "../"), path.resolve(__dirname, "../household")),
+                },
+    
                 {
                   text: "< Back",
                   link: "/",
@@ -170,6 +120,29 @@ export default defineConfig({
           ],
         },
       ],
+      "/example/": [
+        {
+          text: "Example",
+          items: [
+            {
+              text: "Example stuff",
+              collapsed: false,
+              items: [
+                {
+                  text: "Example",
+                  collapsed: false,
+                  items: getDirectoryItems(path.resolve(__dirname, "../"), path.resolve(__dirname, "../diary")),
+                },
+                {
+                  text: "< Back",
+                  link: "/",
+                }, // Manually added item
+              ],
+            },
+          ],
+        },
+      ],
+
     },
   },
 });
