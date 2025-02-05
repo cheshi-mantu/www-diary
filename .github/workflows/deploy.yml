@@ -36,6 +36,7 @@ jobs:
         SERVER_USER: ${{ secrets.SERVER_USER }}
         SERVER_PATH: ${{ secrets.SERVER_PATH }}
       run: |
+        rsync --version
         cd pages/.vitepress
         # Set up SSH key
         echo "$DEPLOY_KEY" > deploy_key
