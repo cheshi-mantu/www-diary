@@ -46,7 +46,7 @@ jobs:
         # rsync --version
         pwd
         # Sync files to server
-        rsync -avz --rsync-path=/usr/bin/rsync -e "ssh -i deploy_key -o StrictHostKeyChecking=no" dist/ $SERVER_USER@$SERVER_HOST:$SERVER_PATH
+        rsync -avz --rsync-path="env -i /usr/bin/rsync" -e "ssh -v -i deploy_key -o StrictHostKeyChecking=no" dist/ $SERVER_USER@$SERVER_HOST:$SERVER_PATH
 
         # Clean up
         rm deploy_key
