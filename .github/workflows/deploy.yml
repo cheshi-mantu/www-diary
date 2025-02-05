@@ -45,7 +45,7 @@ jobs:
         chmod 600 deploy_key
         pwd
         # Sync files to server
-        rsync -av --protocol=30 -e "ssh -i deploy_key -o StrictHostKeyChecking=no" dist/ $SERVER_USER@$SERVER_HOST:$SERVER_PATH
+        rsync -avz -e "ssh -i deploy_key -o StrictHostKeyChecking=no" dist/ $SERVER_USER@$SERVER_HOST:$SERVER_PATH
 
         # Clean up
         rm deploy_key
