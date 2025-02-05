@@ -42,7 +42,7 @@ jobs:
         # Set up SSH key
         echo "$DEPLOY_KEY" > deploy_key
         chmod 600 deploy_key
-        ssh -i deploy_key $SERVER_USER@$SERVER_HOST 'echo Hello'
+        ssh -i deploy_key -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST "echo Hello"
         rsync --version
         pwd
         # Sync files to server
