@@ -243,7 +243,7 @@ ps aux | grep openvpn
 
 Now, we need to forbid the TV box from using any connections except **tun0** to connect to the internet.
 
-We'll use iptables to define the allowed routes. And we'll also need to keep our changes persistent, so we need to install
+We'll use **iptables** to define the allowed routes. And we'll also need to keep our changes persistent, so we need to install
 
 ```shell
 sudo apt update && sudo apt upgrade -y
@@ -266,7 +266,7 @@ sudo iptables -F && sudo iptables -t nat -F && sudo iptables -t mangle -F
 sudo iptables -X && sudo iptables -t nat -X && sudo iptables -t mangle -X
 ```
 
-to avoid blocking the traffic we can create defaul policy
+to avoid blocking the traffic we can create default policy
 
 ```shell
 sudo iptables -P INPUT ACCEPT && sudo iptables -P FORWARD ACCEPT && sudo iptables -P OUTPUT ACCEPT
@@ -300,7 +300,7 @@ If we want these rules to work after a reboot, then we need to make these persis
 sudo iptables-save
 ```
 
-Then we can check the current state of iptables.
+Then we can check the current state of **iptables**.
 
 ```shell
 sudo iptables -L -v -n --line-numbers
@@ -322,20 +322,3 @@ num   pkts bytes target     prot opt in     out     source               destina
 ```
 
 Turn on your TV and check.
-
-### TODO
-
-To describe shell files
-
-To describe the restoration of drect access to the internet.
-
-
-
-
-
-
-
-
-
-
-
