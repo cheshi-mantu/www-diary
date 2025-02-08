@@ -2,6 +2,7 @@
 layout: doc
 title: use Raspberry Pi as VPN router for TV
 editLink: true
+lastUpdated: true
 ---
 
 # Using Raspberry Pi as VPN router
@@ -58,18 +59,18 @@ Where `| grep -B 1 -A 1 '192.168.0'` allows us filtering the output based on `19
 the output will be something like
 
 ```shell
-enx000ec6aceaf9: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+wlan0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         inet 192.168.0.21  netmask 255.255.255.0  broadcast 192.168.0.255
         inet6 fe80::20e:c6ff:feac:eaf9  prefixlen 64  scopeid 0x20<link>
 ```
 
-This means Raspberry Pi got the IP address 192.168.0.21 from my router, and the device that is used to connect Raspberry Pi to the router is **enx000ec6aceaf9**.
+This means Raspberry Pi got the IP address 192.168.0.21 from my router, and the device that is used to connect Raspberry Pi to the router is **wlan0**.
 
 Now, if we execute same command again but without the grep part, we'll understand the whole piceture better.
 
 ```shell
 ifconfig
-end0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         inet 192.168.99.1  netmask 255.255.255.0  broadcast 192.168.99.255
         inet6 fe80::dea6:32ff:fe90:dff3  prefixlen 64  scopeid 0x20<link>
         ether dc:a6:32:90:df:f3  txqueuelen 1000  (Ethernet)
@@ -78,7 +79,7 @@ end0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         TX packets 541  bytes 30596 (29.8 KiB)
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 
-enx000ec6aceaf9: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+wlan0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         inet 192.168.0.21  netmask 255.255.255.0  broadcast 192.168.0.255
         inet6 fe80::20e:c6ff:feac:eaf9  prefixlen 64  scopeid 0x20<link>
         ether 00:0e:c6:ac:ea:f9  txqueuelen 1000  (Ethernet)
@@ -97,13 +98,103 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 ```
 
-For **lo** interface we have no interest, this is standard loopback. And there is **end0** interface which is up as well and has an IP address, this one seems to be the TV box we connected. There will be another interface wich is missinng now, something loke **tunXXX**, it will be created by the VPN application.
+For **lo** interface we have no interest, this is standard loopback. And there is **eth0** interface which is up as well and has an IP address, this one seems to be the TV box we connected. There will be another interface which is missing now, something like **tunXXX**, it will be created by the VPN application.
 
 For sake of this very example, we'll use
 
-- **enx000ec6aceaf9** as the network adaptor that is connected to our router
+- **wlan0** as the network adaptor that is connected to our router
 
-- **end0** as the network adaptor that is connected to our TV
+- **eth0** as the network adaptor that is connected to our TV
+
+### Setup the interface towards the telly
+
+The telly will receive the IP address from the Raspberry Pi, so we need to setup the interface facing towards the telly as the DHCP server.
+
+To do so, we need two things running on the Pi:
+
+- DHCP daemon
+  - that would be **dhcpcd** is the DHCP daemon, running on a linux machine, I hope you can search the internet
+- DNS/DHCP server
+  - that would be **dnsmasq**
+
+#### Installing DNSMASQ
+
+```shell
+sudo apt install dnsmasq -y
+```
+
+#### Configuring DNSMASQ
+
+The **eth0** device will provide the IP address for the telly. My choice is to create a network **192.168.99.1** with network mask **255.255.255.0** (whih is in CIDR notation will be `/24`).
+
+So, we configure `/etc/dnsmasq.conf` file as follows.
+
+```shell
+sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
+sudo nano /etc/dnsmasq.conf
+```
+
+The content of the file will be the following.
+
+```shell
+interface=eth0       # Use interface eth0 for DHCP
+dhcp-range=192.168.99.10,192.168.99.20,255.255.255.0,24h  # DHCP IP range and lease time
+dhcp-option=option:router,192.168.99.1   # Default gateway IP address
+dhcp-option=option:dns-server,8.8.8.8,8.8.4.4  # DNS servers
+```
+
+Save, exit. Restart the **dnsmasq**.
+
+```shell
+sudo service dnsmasq restart
+```
+
+or if you prefer
+
+```shell
+sudo systemctl restart dnsmasq
+```
+
+#### Configuring dhcpcd for eth0
+
+This has to be explicitly shown to the **dhcpcd** that the **eth0** interface has a static IP address.
+
+Edit the configuration file for **dhcpcd**.
+
+```shell
+sudo nano /etc/dhcpcd.conf
+```
+
+add the following to the file.
+
+```shell
+interface eth0
+static ip_address=192.168.2.1/24
+```
+
+Then save and restart the daemon's service.
+
+```shell
+sudo service dhcpcd restart
+```
+
+### Enable IP forwarding for IPv4
+
+```shell
+sudo nano /etc/sysctl.conf
+```
+
+Uncomment or add the following line.
+
+```shell
+net.ipv4.ip_forward=1
+```
+
+Save and check.
+
+```shell
+sudo sysctl -p
+```
 
 ### Get VPN up and running
 
@@ -142,7 +233,7 @@ tun0: flags=4305<UP,POINTOPOINT,RUNNING,NOARP,MULTICAST>  mtu 1500
 
 This is the interface we want our TV box to use for the internet access.
 
-Also we can check if openvpn is running
+Also we can check if OpenVPN is running
 
 ```she
 ps aux | grep openvpn
@@ -152,7 +243,7 @@ ps aux | grep openvpn
 
 Now, we need to forbid the TV box from using any connections except **tun0** to connect to the internet.
 
-We'll use iptables to define the allowed routes. And we'll also need to keep our changes persistent, so we need to install
+We'll use **iptables** to define the allowed routes. And we'll also need to keep our changes persistent, so we need to install
 
 ```shell
 sudo apt update && sudo apt upgrade -y
@@ -175,7 +266,7 @@ sudo iptables -F && sudo iptables -t nat -F && sudo iptables -t mangle -F
 sudo iptables -X && sudo iptables -t nat -X && sudo iptables -t mangle -X
 ```
 
-to avoid blocking the traffic we can create defaul policy
+to avoid blocking the traffic we can create default policy
 
 ```shell
 sudo iptables -P INPUT ACCEPT && sudo iptables -P FORWARD ACCEPT && sudo iptables -P OUTPUT ACCEPT
@@ -188,13 +279,13 @@ Now, we're starting to manipulate the IP tables.
 Append a rule which forwards all packets from **eth0** to **tun0**.
 
 ```shell
-sudo iptables -A FORWARD -i end0 -o tun0 -j ACCEPT
+sudo iptables -A FORWARD -i eth0 -o tun0 -j ACCEPT
 ```
 
 Allow traffic for established and related connections from **eth0** to **tun0**.
 
 ```shell
-sudo iptables -A FORWARD -i tun0 -o end0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+sudo iptables -A FORWARD -i tun0 -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT
 ```
 
 Enable **NAT (Network Address Translation)** for outgoing packets on **tun0**, so they appear to come from the VPN’s IP address. This is essential for devices on the local network (our TV) to route traffic through the VPN and receive responses correctly.
@@ -209,7 +300,7 @@ If we want these rules to work after a reboot, then we need to make these persis
 sudo iptables-save
 ```
 
-Then we can check the current state of iptables.
+Then we can check the current state of **iptables**.
 
 ```shell
 sudo iptables -L -v -n --line-numbers
@@ -223,28 +314,11 @@ num   pkts bytes target     prot opt in     out     source               destina
 
 Chain FORWARD (policy ACCEPT 1797 packets, 125K bytes)
 num   pkts bytes target     prot opt in     out     source               destination         
-1     2732  421K ACCEPT     0    --  end0   tun0    0.0.0.0/0            0.0.0.0/0           
-2     7424 9290K ACCEPT     0    --  tun0   end0    0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
+1     2732  421K ACCEPT     0    --  eth0   tun0    0.0.0.0/0            0.0.0.0/0           
+2     7424 9290K ACCEPT     0    --  tun0   eth0    0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
 
 Chain OUTPUT (policy ACCEPT 7720 packets, 1291K bytes)
 num   pkts bytes target     prot opt in     out     source               destination         
 ```
 
 Turn on your TV and check.
-
-### TODO
-
-To describe shell files
-
-To describe the restoration of drect access to the internet.
-
-
-
-
-
-
-
-
-
-
-

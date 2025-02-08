@@ -6,9 +6,7 @@
 npm add -D vitepress
 ```
 
-
-
-## Start ddev site locally
+## Start dev site locally
 
 ```shell
 npm run docs:dev

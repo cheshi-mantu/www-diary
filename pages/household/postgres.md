@@ -2,6 +2,7 @@
 layout: doc
 title: Postgres
 editLink: true
+lastUpdated: true
 ---
 
 # Install as per the developer pages
