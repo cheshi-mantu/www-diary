@@ -2,6 +2,7 @@
 layout: doc
 title: use Raspberry Pi as VPN router for TV
 editLink: true
+lastUpdated: true
 ---
 
 # Using Raspberry Pi as VPN router
@@ -58,18 +59,18 @@ Where `| grep -B 1 -A 1 '192.168.0'` allows us filtering the output based on `19
 the output will be something like
 
 ```shell
-enx000ec6aceaf9: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+wlan0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         inet 192.168.0.21  netmask 255.255.255.0  broadcast 192.168.0.255
         inet6 fe80::20e:c6ff:feac:eaf9  prefixlen 64  scopeid 0x20<link>
 ```
 
-This means Raspberry Pi got the IP address 192.168.0.21 from my router, and the device that is used to connect Raspberry Pi to the router is **enx000ec6aceaf9**.
+This means Raspberry Pi got the IP address 192.168.0.21 from my router, and the device that is used to connect Raspberry Pi to the router is **wlan0**.
 
 Now, if we execute same command again but without the grep part, we'll understand the whole piceture better.
 
 ```shell
 ifconfig
-end0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         inet 192.168.99.1  netmask 255.255.255.0  broadcast 192.168.99.255
         inet6 fe80::dea6:32ff:fe90:dff3  prefixlen 64  scopeid 0x20<link>
         ether dc:a6:32:90:df:f3  txqueuelen 1000  (Ethernet)
@@ -78,7 +79,7 @@ end0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         TX packets 541  bytes 30596 (29.8 KiB)
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 
-enx000ec6aceaf9: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+wlan0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         inet 192.168.0.21  netmask 255.255.255.0  broadcast 192.168.0.255
         inet6 fe80::20e:c6ff:feac:eaf9  prefixlen 64  scopeid 0x20<link>
         ether 00:0e:c6:ac:ea:f9  txqueuelen 1000  (Ethernet)
@@ -97,13 +98,18 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 ```
 
-For **lo** interface we have no interest, this is standard loopback. And there is **end0** interface which is up as well and has an IP address, this one seems to be the TV box we connected. There will be another interface wich is missinng now, something loke **tunXXX**, it will be created by the VPN application.
+For **lo** interface we have no interest, this is standard loopback. And there is **eth0** interface which is up as well and has an IP address, this one seems to be the TV box we connected. There will be another interface which is missing now, something like **tunXXX**, it will be created by the VPN application.
 
 For sake of this very example, we'll use
 
-- **enx000ec6aceaf9** as the network adaptor that is connected to our router
+- **wlan0** as the network adaptor that is connected to our router
 
-- **end0** as the network adaptor that is connected to our TV
+- **eth0** as the network adaptor that is connected to our TV
+
+### Setup the interface towards the telly
+
+The telly will receive the IP address from the Raspberry Pi, so we need to setup the interface facing towards the telly as the DHCP server.
+
 
 ### Get VPN up and running
 
@@ -188,13 +194,13 @@ Now, we're starting to manipulate the IP tables.
 Append a rule which forwards all packets from **eth0** to **tun0**.
 
 ```shell
-sudo iptables -A FORWARD -i end0 -o tun0 -j ACCEPT
+sudo iptables -A FORWARD -i eth0 -o tun0 -j ACCEPT
 ```
 
 Allow traffic for established and related connections from **eth0** to **tun0**.
 
 ```shell
-sudo iptables -A FORWARD -i tun0 -o end0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+sudo iptables -A FORWARD -i tun0 -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT
 ```
 
 Enable **NAT (Network Address Translation)** for outgoing packets on **tun0**, so they appear to come from the VPN’s IP address. This is essential for devices on the local network (our TV) to route traffic through the VPN and receive responses correctly.
@@ -223,8 +229,8 @@ num   pkts bytes target     prot opt in     out     source               destina
 
 Chain FORWARD (policy ACCEPT 1797 packets, 125K bytes)
 num   pkts bytes target     prot opt in     out     source               destination         
-1     2732  421K ACCEPT     0    --  end0   tun0    0.0.0.0/0            0.0.0.0/0           
-2     7424 9290K ACCEPT     0    --  tun0   end0    0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
+1     2732  421K ACCEPT     0    --  eth0   tun0    0.0.0.0/0            0.0.0.0/0           
+2     7424 9290K ACCEPT     0    --  tun0   eth0    0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
 
 Chain OUTPUT (policy ACCEPT 7720 packets, 1291K bytes)
 num   pkts bytes target     prot opt in     out     source               destination         
