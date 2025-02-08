@@ -110,6 +110,91 @@ For sake of this very example, we'll use
 
 The telly will receive the IP address from the Raspberry Pi, so we need to setup the interface facing towards the telly as the DHCP server.
 
+To do so, we need two things running on the Pi:
+
+- DHCP daemon
+  - that would be **dhcpcd** is the DHCP daemon, running on a linux machine, I hope you can search the internet
+- DNS/DHCP server
+  - that would be **dnsmasq**
+
+#### Installing DNSMASQ
+
+```shell
+sudo apt install dnsmasq -y
+```
+
+#### Configuring DNSMASQ
+
+The **eth0** device will provide the IP address for the telly. My choice is to create a network **192.168.99.1** with network mask **255.255.255.0** (whih is in CIDR notation will be `/24`).
+
+So, we configure `/etc/dnsmasq.conf` file as follows.
+
+```shell
+sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
+sudo nano /etc/dnsmasq.conf
+```
+
+The content of the file will be the following.
+
+```shell
+interface=eth0       # Use interface eth0 for DHCP
+dhcp-range=192.168.99.10,192.168.99.20,255.255.255.0,24h  # DHCP IP range and lease time
+dhcp-option=option:router,192.168.99.1   # Default gateway IP address
+dhcp-option=option:dns-server,8.8.8.8,8.8.4.4  # DNS servers
+```
+
+Save, exit. Restart the **dnsmasq**.
+
+```shell
+sudo service dnsmasq restart
+```
+
+or if you prefer
+
+```shell
+sudo systemctl restart dnsmasq
+```
+
+#### Configuring dhcpcd for eth0
+
+This has to be explicitly shown to the **dhcpcd** that the **eth0** interface has a static IP address.
+
+Edit the configuration file for **dhcpcd**.
+
+```shell
+sudo nano /etc/dhcpcd.conf
+```
+
+add the following to the file.
+
+```shell
+interface eth0
+static ip_address=192.168.2.1/24
+```
+
+Then save and restart the daemon's service.
+
+```shell
+sudo service dhcpcd restart
+```
+
+### Enable IP forwarding for IPv4
+
+```shell
+sudo nano /etc/sysctl.conf
+```
+
+Uncomment or add the following line.
+
+```shell
+net.ipv4.ip_forward=1
+```
+
+Save and check.
+
+```shell
+sudo sysctl -p
+```
 
 ### Get VPN up and running
 
@@ -148,7 +233,7 @@ tun0: flags=4305<UP,POINTOPOINT,RUNNING,NOARP,MULTICAST>  mtu 1500
 
 This is the interface we want our TV box to use for the internet access.
 
-Also we can check if openvpn is running
+Also we can check if OpenVPN is running
 
 ```she
 ps aux | grep openvpn
