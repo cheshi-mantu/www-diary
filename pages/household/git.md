@@ -80,3 +80,37 @@ git commit -m "describe the stuff done"
 # pushes the committed changes to GH
 git push origin
 ```
+
+## Relinking git project from one remote to another
+
+Check what is the remote.
+
+```bash
+git remote -v
+```
+
+It will result in summat like
+
+```bash
+git remote -v
+origin git@github.com:cheshi-mantu/www-diary.git (fetch)
+origin git@github.com:cheshi-mantu/www-diary.git (push)
+```
+
+Now, I want to change the remote to gitlab https://gitlab.com/cheshimantu/www-diary.git`
+
+```bash
+git remote set-url origin git@gitlab.com/cheshimantu/www-diary.git
+```
+
+Then
+
+```bash
+git remote -v
+```
+
+Then push the stuff to new remote
+
+```bash
+git push -u origin master
+```
