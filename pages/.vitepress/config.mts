@@ -77,7 +77,8 @@ export default defineConfig({
             { text: "Start here", link: "/" },
             { text: "Diary", link: "/diary/" },
             { text: "Household", link: "/household/" },
-            { text: "Example", link: "/example/" },
+            { text: "Español", link: "/es/" },
+            { text: "Example", link: "/example/" }
           ],
         },
       ],
@@ -130,8 +131,8 @@ export default defineConfig({
               items: [
                 {
                   text: "Example",
-                  collapsed: false,
-                  items: getDirectoryItems(path.resolve(__dirname, "../"), path.resolve(__dirname, "../diary")),
+                  collapsed: true,
+                  items: getDirectoryItems(path.resolve(__dirname, "../"), path.resolve(__dirname, "../example")),
                 },
                 {
                   text: "< Back",
@@ -142,6 +143,28 @@ export default defineConfig({
           ],
         },
       ],
+      "/es/": [
+        {
+          text: "Español",
+          items: [
+            {
+              text: "Español",
+              collapsed: false,
+              items: [
+                {
+                  text: "Español",
+                  collapsed: false,
+                  items: getDirectoryItems(path.resolve(__dirname, "../"), path.resolve(__dirname, "../es")),
+                },
+                {
+                  text: "< Back",
+                  link: "/",
+                }, // Manually added item
+              ],
+            },
+          ],
+        },
+      ]
 
     },
   },
