@@ -77,6 +77,7 @@ export default defineConfig({
             { text: "Start here", link: "/" },
             { text: "Diary", link: "/diary/" },
             { text: "Household", link: "/household/" },
+            { text: "Español", link: "/espanol/" },
             { text: "Example", link: "/example/" },
           ],
         },
