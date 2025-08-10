@@ -12,7 +12,7 @@ build/
 cache/
 cache/
 deps/
-*/pages/.vitepress/cache/**
+/pages/.vitepress/cache/**
 
 
 # TypeScript declaration files (optional, if you don't want to include them)
