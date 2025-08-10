@@ -45,4 +45,6 @@ When accessing the remote via SSH, please consider using [RSA keys](./ssh-rsa/),
 
 Yes, you need a domain name. Something like this one `cheshimantu.lol` (don't ask what does that mean, 'cause it doesn't). Get one from the trustworthy registrar. If you want to go cheap, go to https:\//namecheap.com, it's really cheap. It provides all standard registrar services and additional services like paid SSL certificates.
 
-###
+Namecheap have pretty well documented everything they sell, so you won't be lost. Their support is also great and they would help you very fast and in a professional manner. If this is your first time and you have doubts, then ask support first, consulting is cheaper than troubleshooting.
+
+### Insall
