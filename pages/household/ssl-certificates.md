@@ -47,4 +47,10 @@ Yes, you need a domain name. Something like this one `cheshimantu.lol` (don't as
 
 Namecheap have pretty well documented everything they sell, so you won't be lost. Their support is also great and they would help you very fast and in a professional manner. If this is your first time and you have doubts, then ask support first, consulting is cheaper than troubleshooting.
 
-### Insall
+### Install nginx and certbot
+
+
+
+
+
+[certbot instructions](https://certbot.eff.org/instructions)
