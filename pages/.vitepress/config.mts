@@ -63,7 +63,7 @@ export default defineConfig({
     socialLinks: [
       { icon: 'github', link: 'https://github.com/cheshi-mantu/www-diary' }
     ],
-    lastUpdated: true,
+    lastUpdated: false,
     editLink: {
       pattern: 'https://github.com/cheshi-mantu/www-diary/edit/main/pages/:path',
       text: 'Edit this page on GitHub'

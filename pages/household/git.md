@@ -1,8 +1,8 @@
 ---
 title: Git for an idiot
 layout: doc
-editLink: true
-lastUpdated: true
+editLink: false
+lastUpdated: false
 ---
 
 # Here we have git and sometimes GitHub basics for an idiot

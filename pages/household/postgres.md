@@ -1,8 +1,8 @@
 ---
 layout: doc
 title: Postgres
-editLink: true
-lastUpdated: true
+editLink: false
+lastUpdated: false
 ---
 
 # Install as per the developer pages
