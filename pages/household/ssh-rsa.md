@@ -2,8 +2,8 @@
 layout: doc
 prev: true
 next: true
-editLink: true
-lastUpdated: true
+editLink: false
+lastUpdated: false
 title: RSA keys, SSH
 ---
 

@@ -4,7 +4,7 @@ prev: false
 title: espa
 next: false
 editLink: false
-lastUpdated: true
+lastUpdated: false
 ---
 
 # Sí, estoy entendiendo español
