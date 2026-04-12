@@ -5,7 +5,9 @@
       "Bash(npm audit:*)",
       "Bash(npm outdated:*)",
       "Bash(npm install:*)",
-      "Bash(npm list:*)"
+      "Bash(npm list:*)",
+      "Bash(grep -rn \"688\\\\|752\\\\|800\\\\|848\\\\|content.*width\\\\|width.*content\" /Users/gogi/code/gh/www-diary/node_modules/vitepress/dist/node/chunk-*.js)",
+      "Bash(grep -n \"outline\\\\|aside\\\\|font-size\" /Users/gogi/code/gh/www-diary/node_modules/vitepress/dist/client/theme-default/components/VPDocAside*.vue)"
     ]
   }
 }
