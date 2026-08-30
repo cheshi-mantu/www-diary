@@ -7,15 +7,15 @@ editLink: false
 lastUpdated: false
 ---
 
-# Sí, estoy entendiendo español
+# Sí, estoy aprendiendo español
 
 ## En un restaurante o en una cafetería
+
+The most important phrases you would need in Spanish.
 
 |En|Es|
 |--|--|
 |What draft beers do you have?|¿Que cerveza tienes de barril?|
-|What beers do you have on tap?|¿Que surtidores de cerveza tienes?|
-
 
 ## En una tienda
 
